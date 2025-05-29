@@ -1,25 +1,54 @@
 {
-  "name": "vite-project",
-  "private": true,
-  "version": "0.0.0",
+  "name": "flyrancher-pro-frontend",
+  "private": false,
+  "version": "1.0.0",
   "type": "module",
+  "homepage": "https://yourusername.github.io/wharfkit-repo-name",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "@wharfkit/session": "^1.0.0",
+    "@wharfkit/session": "^1.4.0",
+    "@wharfkit/antelope": "^1.0.13",
     "@wharfkit/wallet-plugin-anchor": "^1.0.0",
     "@wharfkit/web-renderer": "^1.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/react": "^18.0.24",
-    "@types/react-dom": "^18.0.8",
-    "@vitejs/plugin-react": "^2.2.0",
-    "typescript": "^4.6.4",
-    "vite": "^3.2.3"
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "@typescript-eslint/parser": "^5.57.1",
+    "@vitejs/plugin-react": "^4.0.0",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.38.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.3.4",
+    "gh-pages": "^6.1.0",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.5",
+    "typescript": "^5.0.2",
+    "vite": "^4.3.2"
+  },
+  "keywords": [
+    "wax",
+    "blockchain",
+    "nft",
+    "automation",
+    "ranchers-land",
+    "flyrancher",
+    "subscription"
+  ],
+  "author": "FlyRancher Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/wharfkit-repo-name.git"
   }
 }
