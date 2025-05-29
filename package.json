@@ -3,7 +3,7 @@
   "private": false,
   "version": "1.0.0",
   "type": "module",
-  "homepage": "https://yourusername.github.io/wharfkit-repo-name",
+  "homepage": "https://YOUR_GITHUB_USERNAME.github.io/flyrancher-pro-frontend",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -49,6 +49,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/wharfkit-repo-name.git"
+    "url": "https://github.com/YOUR_GITHUB_USERNAME/flyrancher-pro-frontend.git"
   }
 }
