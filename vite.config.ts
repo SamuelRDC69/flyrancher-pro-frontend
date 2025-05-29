@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   // GitHub Pages serves from a subdirectory, so we need to set the base path
-  base: process.env.NODE_ENV === 'production' ? '/wharfkit-repo-name/' : '/',
+  base: process.env.NODE_ENV === 'production' ? '/flyrancher-pro-frontend/' : '/',
   build: {
     outDir: 'dist',
     sourcemap: false,
