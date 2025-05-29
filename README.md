@@ -1,6 +1,6 @@
 # 🤖 FlyRancher Pro - WAX NFT Automation Frontend
 
-Professional-grade automation for Ranchers Land NFTs. Maximize your rewards with intelligent claiming, tool maintenance, and energy management.
+Professional-grade automation for Ranchers Land NFTs. Maximize your rewards with intelligent claiming, tool maintenance, and energy management!
 
 ## ✨ Features
 
