@@ -165,26 +165,25 @@ const Homepage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       {/* Header */}
-      <header className="relative z-10 px-6 py-4">
+      <header className="relative z-50 px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center">
               <span className="text-xl font-bold text-white">🤖</span>
             </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-              FlyRancher Pro
-            </h1>
+            <div>
+              <h1 className="text-2xl font-bold text-white">FlyRancher Pro</h1>
+              <p className="text-sm text-slate-400">Professional NFT Automation</p>
+            </div>
           </div>
           
           <div className="flex items-center space-x-4">
-            {/* Network Toggle */}
-            <div className="flex items-center space-x-2 bg-slate-800/50 backdrop-blur-sm rounded-xl px-3 py-2 border border-slate-700/50">
-              <span className="text-sm text-slate-300">Network:</span>
+            <div className="flex items-center space-x-2 text-sm">
               <button 
                 onClick={toggleNetwork}
-                className={`px-3 py-1 rounded-lg text-sm font-medium transition-all ${
+                className={`px-3 py-1 rounded-lg font-medium transition-colors ${
                   isTestnet 
-                    ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' 
+                    ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' 
                     : 'bg-green-500/20 text-green-400 border border-green-500/30'
                 }`}
               >
@@ -192,9 +191,8 @@ const Homepage = () => {
               </button>
             </div>
             
-            {/* Wallet Connect */}
             {!session && (
-              <Button onClick={login} variant="primary">
+              <Button onClick={login} size="sm">
                 Connect Wallet
               </Button>
             )}
@@ -203,72 +201,72 @@ const Homepage = () => {
       </header>
 
       {/* Hero Section */}
-      <main className="relative px-6 py-20">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="animate-float mb-8">
-            <div className="w-32 h-32 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full mx-auto flex items-center justify-center mb-6 animate-glow">
-              <span className="text-6xl">🤖</span>
+      <main className="relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-900/50 to-slate-900" />
+        <div className="relative max-w-7xl mx-auto px-6 py-16">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold text-white mb-6">
+              Automate Your{' '}
+              <span className="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                WAX NFTs
+              </span>
+            </h2>
+            <p className="text-xl text-slate-300 max-w-3xl mx-auto mb-8">
+              Professional-grade automation for Ranchers Land NFTs. Maximize your rewards with intelligent claiming, 
+              tool maintenance, and energy management.
+            </p>
+            
+            <div className="flex flex-wrap justify-center gap-4 text-sm text-slate-400">
+              <div className="flex items-center space-x-2">
+                <span className="text-green-400">✓</span>
+                <span>Auto-Claim NFTs</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-green-400">✓</span>
+                <span>Tool Repair Automation</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-green-400">✓</span>
+                <span>Energy Management</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-green-400">✓</span>
+                <span>Multiple Wallet Support</span>
+              </div>
             </div>
           </div>
-          
-          <h1 className="text-6xl md:text-7xl font-black mb-6 bg-gradient-to-r from-yellow-400 via-orange-500 to-purple-600 bg-clip-text text-transparent">
-            FlyRancher Pro
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-slate-300 mb-8 max-w-3xl mx-auto">
-            Professional-grade automation for Ranchers Land NFTs. Maximize your rewards with intelligent claiming, tool maintenance, and energy management!
-          </p>
 
-          {!session && (
-            <div className="space-x-4">
-              <Button onClick={login} size="lg" variant="primary">
-                Connect Wallet & Start
-              </Button>
-            </div>
-          )}
-        </div>
-
-        {/* Features Grid */}
-        <div className="max-w-7xl mx-auto mt-20 grid md:grid-cols-3 gap-8">
-          {[
-            { icon: '⚡', title: 'Smart Automation', desc: 'Intelligent NFT claiming and energy management' },
-            { icon: '🔧', title: 'Tool Maintenance', desc: 'Auto-repair tools at optimal durability levels' },
-            { icon: '💎', title: 'Premium Features', desc: 'Advanced strategies for maximum efficiency' }
-          ].map((feature, i) => (
-            <Card key={i} className="text-center hover:scale-105 transition-transform">
-              <div className="text-4xl mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
-              <p className="text-slate-300">{feature.desc}</p>
-            </Card>
-          ))}
-        </div>
-
-        {/* Subscription Tiers Preview */}
-        <div className="max-w-7xl mx-auto mt-20">
-          <h2 className="text-4xl font-bold text-center text-white mb-12">Choose Your Plan</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {Object.entries(subscriptionTiers).map(([key, tier]) => (
-              <Card key={key} className="text-center hover:scale-105 transition-all">
-                <div className="text-4xl mb-4">{tier.icon}</div>
-                <h3 className="text-2xl font-bold text-white mb-2">{tier.name}</h3>
-                <div className="text-3xl font-black mb-4">
-                  <span className="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-                    ${tier.price}
-                  </span>
-                  <span className="text-slate-400 text-lg">/month</span>
+          {/* Subscription Plans */}
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            {Object.entries(subscriptionTiers).map(([tier, config]) => (
+              <Card key={tier} className="relative text-center">
+                <div className="mb-4">
+                  <div className="text-4xl mb-2">{config.icon}</div>
+                  <h3 className="text-xl font-bold text-white mb-2">{config.name}</h3>
+                  <div className="text-3xl font-bold text-white mb-1">
+                    {config.price} WAX
+                  </div>
+                  <p className="text-sm text-slate-400">per month</p>
                 </div>
-                <div className="text-slate-300 mb-6">
-                  Up to {tier.walletLimit} wallets
-                </div>
-                <ul className="space-y-2 text-slate-300 mb-8">
-                  {tier.features.map((feature, i) => (
-                    <li key={i} className="flex items-center justify-center space-x-2">
+                
+                <div className="space-y-3 mb-6">
+                  <div className="text-sm text-slate-300">
+                    <span className="font-semibold">Up to {config.walletLimit} wallets</span>
+                  </div>
+                  {config.features.map((feature, idx) => (
+                    <div key={idx} className="flex items-center justify-center space-x-2 text-sm">
                       <span className="text-green-400">✓</span>
-                      <span>{feature}</span>
-                    </li>
+                      <span className="text-slate-300">{feature}</span>
+                    </div>
                   ))}
-                </ul>
-                <Button variant="primary" className="w-full">
+                </div>
+                
+                <Button 
+                  variant={tier === 'premium' ? 'primary' : 'outline'} 
+                  className="w-full"
+                  onClick={login}
+                  disabled={!!session}
+                >
                   {session ? 'Select Plan' : 'Connect Wallet'}
                 </Button>
               </Card>
@@ -280,7 +278,7 @@ const Homepage = () => {
   );
 };
 
-// Simple Dashboard Component
+// Dashboard Component
 const Dashboard = () => {
   const context = useContext(AppContext);
   if (!context) return null;
