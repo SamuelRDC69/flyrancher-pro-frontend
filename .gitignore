@@ -6,6 +6,12 @@ yarn-error.log*
 pnpm-debug.log*
 .pnpm-debug.log*
 
+# Yarn cache and files
+.yarn-cache/
+.yarn/
+.pnp.*
+yarn-error.log
+
 # Build outputs
 dist/
 build/
@@ -141,3 +147,6 @@ npm-shrinkwrap.json
 
 # Local Netlify folder
 .netlify
+
+# Husky
+.husky/_
