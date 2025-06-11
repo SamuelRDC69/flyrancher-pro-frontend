@@ -10,7 +10,9 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "test": "vitest",
+    "test:ui": "vitest --ui"
   },
   "dependencies": {
     "@wharfkit/session": "^1.4.0",
@@ -34,7 +36,9 @@
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.5",
     "typescript": "^5.0.2",
-    "vite": "^4.3.2"
+    "vite": "^4.3.2",
+    "vitest": "^1.0.0",
+    "@vitest/ui": "^1.0.0"
   },
   "keywords": [
     "wax",
@@ -43,12 +47,21 @@
     "automation",
     "ranchers-land",
     "flyrancher",
-    "subscription"
+    "subscription",
+    "defi",
+    "gaming"
   ],
   "author": "FlyRancher Team",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/SamuelRDC69/flyrancher-pro-frontend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SamuelRDC69/flyrancher-pro-frontend/issues"
+  },
+  "description": "Professional-grade automation frontend for Ranchers Land NFTs with subscription management",
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
