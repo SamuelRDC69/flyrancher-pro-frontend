@@ -87,7 +87,8 @@ export const StatusBadge = ({ status, size = 'md' }) => {
     pending: { color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', icon: '●' },
     error: { color: 'bg-red-500/20 text-red-400 border-red-500/30', icon: '●' },
     success: { color: 'bg-green-500/20 text-green-400 border-green-500/30', icon: '✓' },
-    warning: { color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', icon: '⚠' }
+    warning: { color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', icon: '⚠' },
+    expired: { color: 'bg-red-500/20 text-red-400 border-red-500/30', icon: '✗' }
   };
 
   const config = statusConfig[status] || statusConfig.inactive;
@@ -131,7 +132,7 @@ export const Button = ({
   className = '',
   ...props 
 }) => {
-  const baseClasses = 'font-semibold rounded-xl transition-all transform focus:outline-none focus:ring-2 focus:ring-yellow-400/50 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseClasses = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all transform focus:outline-none focus:ring-2 focus:ring-yellow-400/50 disabled:opacity-50 disabled:cursor-not-allowed';
   
   const sizeClasses = {
     sm: 'px-4 py-2 text-sm',
@@ -156,77 +157,44 @@ export const Button = ({
     >
       {loading ? (
         <div className="flex items-center space-x-2">
-          <LoadingSpinner size="sm" />
+          <LoadingSpinner size="sm" color={variant === 'primary' ? 'yellow' : 'blue'} />
           <span>Loading...</span>
         </div>
-      ) : (
-        children
-      )}
+      ) : children}
     </button>
-  );
-};
-
-// Modal Component
-export const Modal = ({ isOpen, onClose, title, children, maxWidth = 'md' }) => {
-  if (!isOpen) return null;
-
-  const maxWidthClasses = {
-    sm: 'max-w-sm',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-    xl: 'max-w-xl',
-    '2xl': 'max-w-2xl'
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className={`bg-slate-800 rounded-2xl p-6 w-full ${maxWidthClasses[maxWidth]} border border-slate-700 animate-scale-in`}>
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-2xl font-bold text-white">{title}</h3>
-          <button 
-            onClick={onClose}
-            className="text-slate-400 hover:text-white transition-colors"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-        {children}
-      </div>
-    </div>
   );
 };
 
 // Input Component
 export const Input = ({ 
-  label, 
-  error, 
+  label,
+  error,
   helper,
   className = '',
   ...props 
 }) => {
   return (
-    <div className="space-y-2">
+    <div className="w-full">
       {label && (
-        <label className="block text-slate-300 text-sm font-medium">
+        <label className="block text-sm font-medium text-slate-300 mb-2">
           {label}
         </label>
       )}
       <input
         className={`
-          w-full bg-slate-900/50 border rounded-lg px-4 py-3 text-white placeholder-slate-500 
+          w-full px-4 py-3 bg-slate-700 rounded-xl text-white placeholder-slate-400 
           transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-400/50
-          ${error ? 'border-red-400 focus:border-red-400' : 'border-slate-600 focus:border-yellow-400'}
+          ${error ? 
+            'border-red-400 focus:border-red-400' : 'border-slate-600 focus:border-yellow-400'}
           ${className}
         `}
         {...props}
       />
       {error && (
-        <p className="text-red-400 text-sm">{error}</p>
+        <p className="text-red-400 text-sm mt-1">{error}</p>
       )}
       {helper && !error && (
-        <p className="text-slate-500 text-sm">{helper}</p>
+        <p className="text-slate-500 text-sm mt-1">{helper}</p>
       )}
     </div>
   );
@@ -283,4 +251,205 @@ export const useToast = () => {
   };
 
   return { toast, showToast, hideToast };
+};
+
+// Modal Component
+export const Modal = ({ isOpen, onClose, title, children, size = 'md' }) => {
+  if (!isOpen) return null;
+
+  const sizeClasses = {
+    sm: 'max-w-md',
+    md: 'max-w-lg',
+    lg: 'max-w-2xl',
+    xl: 'max-w-4xl'
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div 
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      <div className={`relative bg-slate-800 rounded-xl border border-slate-700/50 w-full ${sizeClasses[size]} max-h-[90vh] overflow-y-auto`}>
+        <div className="flex items-center justify-between p-6 border-b border-slate-700/50">
+          <h3 className="text-xl font-bold text-white">{title}</h3>
+          <button 
+            onClick={onClose}
+            className="text-slate-400 hover:text-white transition-colors"
+          >
+            ×
+          </button>
+        </div>
+        <div className="p-6">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Select Component
+export const Select = ({ 
+  label,
+  error,
+  helper,
+  options = [],
+  value,
+  onChange,
+  placeholder = "Select an option",
+  className = ''
+}) => {
+  return (
+    <div className="w-full">
+      {label && (
+        <label className="block text-sm font-medium text-slate-300 mb-2">
+          {label}
+        </label>
+      )}
+      <select
+        value={value}
+        onChange={onChange}
+        className={`
+          w-full px-4 py-3 bg-slate-700 rounded-xl text-white 
+          transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-400/50
+          ${error ? 
+            'border-red-400 focus:border-red-400' : 'border-slate-600 focus:border-yellow-400'}
+          ${className}
+        `}
+      >
+        <option value="" disabled className="text-slate-400">
+          {placeholder}
+        </option>
+        {options.map((option) => (
+          <option 
+            key={option.value} 
+            value={option.value}
+            className="bg-slate-700 text-white"
+          >
+            {option.label}
+          </option>
+        ))}
+      </select>
+      {error && (
+        <p className="text-red-400 text-sm mt-1">{error}</p>
+      )}
+      {helper && !error && (
+        <p className="text-slate-500 text-sm mt-1">{helper}</p>
+      )}
+    </div>
+  );
+};
+
+// Tooltip Component
+export const Tooltip = ({ children, content, position = 'top' }) => {
+  const [isVisible, setIsVisible] = React.useState(false);
+
+  const positionClasses = {
+    top: 'bottom-full left-1/2 transform -translate-x-1/2 mb-2',
+    bottom: 'top-full left-1/2 transform -translate-x-1/2 mt-2',
+    left: 'right-full top-1/2 transform -translate-y-1/2 mr-2',
+    right: 'left-full top-1/2 transform -translate-y-1/2 ml-2'
+  };
+
+  return (
+    <div 
+      className="relative inline-block"
+      onMouseEnter={() => setIsVisible(true)}
+      onMouseLeave={() => setIsVisible(false)}
+    >
+      {children}
+      {isVisible && (
+        <div className={`absolute z-50 px-2 py-1 text-xs text-white bg-slate-900 rounded border border-slate-700/50 ${positionClasses[position]}`}>
+          {content}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Badge Component
+export const Badge = ({ children, variant = 'default', size = 'md' }) => {
+  const sizeClasses = {
+    sm: 'px-2 py-1 text-xs',
+    md: 'px-3 py-1 text-sm',
+    lg: 'px-4 py-2 text-base'
+  };
+
+  const variantClasses = {
+    default: 'bg-slate-600 text-slate-200',
+    primary: 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30',
+    success: 'bg-green-500/20 text-green-400 border border-green-500/30',
+    danger: 'bg-red-500/20 text-red-400 border border-red-500/30',
+    warning: 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30',
+    info: 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+  };
+
+  return (
+    <span className={`inline-flex items-center font-medium rounded-full ${sizeClasses[size]} ${variantClasses[variant]}`}>
+      {children}
+    </span>
+  );
+};
+
+// Tabs Component
+export const Tabs = ({ tabs, activeTab, onTabChange, className = '' }) => {
+  return (
+    <div className={`border-b border-slate-700/50 ${className}`}>
+      <nav className="flex space-x-8">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => onTabChange(tab.id)}
+            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+              activeTab === tab.id
+                ? 'border-yellow-400 text-yellow-400'
+                : 'border-transparent text-slate-400 hover:text-slate-300 hover:border-slate-300'
+            }`}
+          >
+            {tab.icon && <span className="mr-2">{tab.icon}</span>}
+            {tab.name}
+          </button>
+        ))}
+      </nav>
+    </div>
+  );
+};
+
+// Alert Component
+export const Alert = ({ type = 'info', title, message, onClose, className = '' }) => {
+  const typeClasses = {
+    info: 'bg-blue-500/20 border-blue-500/30 text-blue-400',
+    success: 'bg-green-500/20 border-green-500/30 text-green-400',
+    warning: 'bg-yellow-500/20 border-yellow-500/30 text-yellow-400',
+    error: 'bg-red-500/20 border-red-500/30 text-red-400'
+  };
+
+  const icons = {
+    info: 'ℹ',
+    success: '✓',
+    warning: '⚠',
+    error: '✗'
+  };
+
+  return (
+    <div className={`rounded-xl border p-4 ${typeClasses[type]} ${className}`}>
+      <div className="flex items-start space-x-3">
+        <span className="text-lg">{icons[type]}</span>
+        <div className="flex-1">
+          {title && (
+            <h4 className="font-semibold mb-1">{title}</h4>
+          )}
+          <p className="text-sm opacity-90">{message}</p>
+        </div>
+        {onClose && (
+          <button 
+            onClick={onClose}
+            className="text-current hover:opacity-70 transition-opacity"
+          >
+            ×
+          </button>
+        )}
+      </div>
+    </div>
+  );
 };
