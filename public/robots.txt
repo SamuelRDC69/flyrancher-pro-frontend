@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://samuelrdc69.github.io/flyrancher-pro-frontend/sitemap.xml
+
+# Disallow admin or sensitive paths (none currently)
+# Disallow: /admin/
+
+# Allow all content for WAX NFT automation app
