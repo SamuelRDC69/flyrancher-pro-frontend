@@ -1,0 +1,31 @@
+// File: public/manifest.json
+{
+  "name": "FlyRancher Pro - WAX NFT Automation",
+  "short_name": "FlyRancher Pro",
+  "description": "Professional-grade automation for Ranchers Land NFTs. Maximize rewards with intelligent claiming, tool maintenance, and energy management.",
+  "start_url": "/flyrancher-pro-frontend/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#facc15",
+  "orientation": "portrait-primary",
+  "scope": "/flyrancher-pro-frontend/",
+  "lang": "en",
+  "categories": ["finance", "productivity", "games"],
+  "icons": [
+    {
+      "src": "/flyrancher-pro-frontend/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/flyrancher-pro-frontend/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/flyrancher-pro-frontend/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
