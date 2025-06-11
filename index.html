@@ -196,7 +196,7 @@
     <!-- App Root -->
     <div id="root"></div>
     
-    <!-- Service Worker Registration -->
+    <!-- App Initialization Script -->
     <script>
       // Remove loading screen when app loads
       window.addEventListener('load', () => {
@@ -211,35 +211,108 @@
         }, 1000);
       });
       
-      // Register service worker for PWA functionality
-      if ('serviceWorker' in navigator && location.protocol === 'https:') {
+      // Service Worker Registration with better error handling
+      if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-            .then((registration) => {
-              console.log('SW registered: ', registration);
-            })
-            .catch((registrationError) => {
-              console.log('SW registration failed: ', registrationError);
-            });
+          // Only register on HTTPS or localhost
+          const isSecure = location.protocol === 'https:' || location.hostname === 'localhost';
+          
+          if (isSecure) {
+            navigator.serviceWorker.register('/sw.js')
+              .then((registration) => {
+                console.log('✅ SW registered successfully:', registration.scope);
+                
+                // Listen for updates
+                registration.addEventListener('updatefound', () => {
+                  console.log('🔄 SW update found');
+                  const newWorker = registration.installing;
+                  
+                  if (newWorker) {
+                    newWorker.addEventListener('statechange', () => {
+                      if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        console.log('🆕 SW update available');
+                        // You could show a notification to the user here
+                      }
+                    });
+                  }
+                });
+              })
+              .catch((error) => {
+                // Only log as warning, not error, since SW is optional
+                console.warn('⚠️ SW registration failed (optional feature):', error.message);
+              });
+          } else {
+            console.log('ℹ️ SW not registered - HTTPS required');
+          }
         });
+      } else {
+        console.log('ℹ️ SW not supported in this browser');
       }
       
-      // Error handling
+      // Global error handling
       window.addEventListener('error', (event) => {
-        console.error('Global error:', event.error);
+        console.error('💥 Global error:', event.error);
+        
+        // Filter out common non-critical errors
+        const ignoredErrors = [
+          'Script error',
+          'Non-Error promise rejection captured',
+          'ResizeObserver loop limit exceeded'
+        ];
+        
+        if (!ignoredErrors.some(ignored => event.message?.includes(ignored))) {
+          // Only log significant errors
+          console.error('Error details:', {
+            message: event.message,
+            filename: event.filename,
+            line: event.lineno,
+            column: event.colno,
+            stack: event.error?.stack
+          });
+        }
       });
       
       window.addEventListener('unhandledrejection', (event) => {
-        console.error('Unhandled promise rejection:', event.reason);
+        console.error('🚫 Unhandled promise rejection:', event.reason);
+        
+        // Prevent default browser behavior for non-critical rejections
+        if (event.reason?.message?.includes('Load failed') || 
+            event.reason?.message?.includes('network')) {
+          event.preventDefault();
+          console.warn('Network error prevented from showing to user');
+        }
       });
       
-      // Analytics (replace with your tracking code)
+      // App performance monitoring
+      if ('performance' in window) {
+        window.addEventListener('load', () => {
+          setTimeout(() => {
+            const navigation = performance.getEntriesByType('navigation')[0];
+            if (navigation) {
+              console.log('📊 Performance metrics:', {
+                domContentLoaded: Math.round(navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart),
+                loadComplete: Math.round(navigation.loadEventEnd - navigation.loadEventStart),
+                totalTime: Math.round(navigation.loadEventEnd - navigation.fetchStart)
+              });
+            }
+          }, 0);
+        });
+      }
+      
+      // Analytics placeholder (replace with your tracking code)
       /*
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'GA_MEASUREMENT_ID');
+      gtag('config', 'GA_MEASUREMENT_ID', {
+        page_title: 'FlyRancher Pro',
+        page_location: window.location.href
+      });
       */
+      
+      // App version info
+      console.log('🤖 FlyRancher Pro v1.0.0 - Professional NFT Automation');
+      console.log('🔗 GitHub: https://github.com/SamuelRDC69/flyrancher-pro-frontend');
     </script>
     
     <!-- App Script -->
