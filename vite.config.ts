@@ -70,12 +70,23 @@ export default defineConfig({
     port: 4173
   },
   
-  // Ensure assets are loaded correctly
-  assetsInclude: ['**/*.svg', '**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif'],
+  // Ensure all assets are included (including new static files)
+  publicDir: 'public',
+  assetsInclude: [
+    '**/*.svg', 
+    '**/*.png', 
+    '**/*.jpg', 
+    '**/*.jpeg', 
+    '**/*.gif',
+    '**/*.ico',
+    '**/*.webp',
+    '**/manifest.json',
+    '**/robots.txt'
+  ],
   
   // Environment variables
   define: {
-    __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
+    __APP_VERSION__: JSON.stringify(process.env.npm_package_version || '1.0.0'),
     __BUILD_TIME__: JSON.stringify(new Date().toISOString())
   },
   
