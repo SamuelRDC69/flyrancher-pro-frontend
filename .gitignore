@@ -3,14 +3,6 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-.pnpm-debug.log*
-
-# Yarn cache and files
-.yarn-cache/
-.yarn/
-.pnp.*
-yarn-error.log
 
 # Build outputs
 dist/
@@ -30,123 +22,25 @@ build/
 .idea/
 *.swp
 *.swo
-*~
 
 # OS generated files
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 
 # Logs
-logs/
 *.log
 
-# Coverage reports
-coverage/
-.nyc_output/
-*.lcov
-
-# Test output
-test-results/
-playwright-report/
-test-results.xml
-
-# Temporary files
-*.tmp
-*.temp
+# Cache
 .cache/
-
-# Package manager files
-.npm/
-.yarn/
-.pnpm-store/
-
-# TypeScript
-*.tsbuildinfo
+.yarn-cache/
 
 # ESLint
 .eslintcache
 
-# Optional npm cache directory
-.npm
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# dotenv environment variables file
-.env.test
-
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# Next.js build output
-.next
-out
-
-# Nuxt.js build / generate output
-.nuxt
-dist
-
-# Gatsby files
-.cache/
-public
-
-# Storybook build outputs
-.out
-.storybook-out
-
-# Temporary folders
-tmp/
-temp/
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# Temporary files
+*.tmp
+*.temp
 
 # Local development
 .vercel
 .netlify
-
-# PWA files (auto-generated)
-sw.js.map
-workbox-*.js
-workbox-*.js.map
-
-# Performance monitoring
-.lighthouse/
-lighthouse-results.json
-
-# Security
-.npmrc
-npm-shrinkwrap.json
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# Analytics
-.analytics/
-
-# Local Netlify folder
-.netlify
-
-# Husky
-.husky/_
