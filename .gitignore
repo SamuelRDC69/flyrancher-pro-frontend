@@ -4,12 +4,13 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-lerna-debug.log*
+.pnpm-debug.log*
 
 # Build outputs
 dist/
-dist-ssr/
 build/
+.vite/
+*.tsbuildinfo
 
 # Environment variables
 .env
@@ -18,27 +19,51 @@ build/
 .env.test.local
 .env.production.local
 
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
 # Logs
 logs/
 *.log
-*.log.*
 
-# Runtime data
-pids/
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
+# Coverage reports
 coverage/
+.nyc_output/
 *.lcov
 
-# nyc test coverage
-.nyc_output/
+# Test output
+test-results/
+playwright-report/
+test-results.xml
 
-# Dependency directories
-node_modules/
-jspm_packages/
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Package manager files
+.npm/
+.yarn/
+.pnpm-store/
+
+# TypeScript
+*.tsbuildinfo
+
+# ESLint
+.eslintcache
 
 # Optional npm cache directory
 .npm
@@ -52,16 +77,24 @@ jspm_packages/
 # Yarn Integrity file
 .yarn-integrity
 
+# dotenv environment variables file
+.env.test
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
 
 # Next.js build output
 .next
+out
 
 # Nuxt.js build / generate output
 .nuxt
 dist
+
+# Gatsby files
+.cache/
+public
 
 # Storybook build outputs
 .out
@@ -74,37 +107,37 @@ temp/
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea/
-.DS_Store
+.idea
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
 
-# OS generated files
-Thumbs.db
-ehthumbs.db
-
-# Private keys and sensitive data - NEVER COMMIT THESE
-*.key
-*.pem
-private-key*
-*-private-key*
-wax-key*
-
-# GitHub Pages
-.gh-pages/
-
-# Testing
-test-results/
-coverage/
-
-# Playwright
-playwright-report/
-playwright/.cache/
-
 # Local development
-.local
-local.env
-*.local
+.vercel
+.netlify
+
+# PWA files (auto-generated)
+sw.js.map
+workbox-*.js
+workbox-*.js.map
+
+# Performance monitoring
+.lighthouse/
+lighthouse-results.json
+
+# Security
+.npmrc
+npm-shrinkwrap.json
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Analytics
+.analytics/
+
+# Local Netlify folder
+.netlify
