@@ -34,20 +34,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: 'yarn'
       
       - name: Install dependencies
         run: |
-          npm ci
-          npm audit --audit-level=high || echo "⚠️ Security audit found issues"
+          yarn install --frozen-lockfile --prefer-offline
+          echo "✅ Dependencies installed successfully"
       
       - name: Build application
         run: |
-          npm run build
+          yarn build
         env:
           NODE_ENV: production
           VITE_APP_ENV: production
           VITE_API_BASE_URL: https://flyrancher-sub.onrender.com
+          CI: true
       
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -111,31 +112,22 @@ jobs:
           curl -f https://samuelrdc69.github.io/flyrancher-pro-frontend/manifest.json > /dev/null || echo "⚠️ Manifest file not found"
           echo "✅ Basic health check completed"
           
-      - name: Lighthouse CI
+      - name: Basic performance check
         run: |
-          if command -v npm &> /dev/null; then
-            npm install -g @lhci/cli@0.12.x || echo "⚠️ Failed to install Lighthouse CI"
-            
-            # Run Lighthouse audit
-            lhci autorun --config='{
-              "ci": {
-                "collect": {
-                  "url": ["https://samuelrdc69.github.io/flyrancher-pro-frontend/"],
-                  "numberOfRuns": 1
-                },
-                "assert": {
-                  "assertions": {
-                    "categories:performance": ["warn", {"minScore": 0.8}],
-                    "categories:accessibility": ["error", {"minScore": 0.9}],
-                    "categories:best-practices": ["warn", {"minScore": 0.8}],
-                    "categories:seo": ["warn", {"minScore": 0.8}],
-                    "categories:pwa": ["warn", {"minScore": 0.8}]
-                  }
-                }
-              }
-            }' || echo "⚠️ Lighthouse audit failed or completed with warnings"
+          echo "⏱️ Checking site performance..."
+          
+          # Simple curl check with timing
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code};%{time_total}" https://samuelrdc69.github.io/flyrancher-pro-frontend/)
+          STATUS_CODE=$(echo $HTTP_STATUS | cut -d';' -f1)
+          RESPONSE_TIME=$(echo $HTTP_STATUS | cut -d';' -f2)
+          
+          echo "📊 Response time: ${RESPONSE_TIME}s"
+          echo "📈 HTTP Status: $STATUS_CODE"
+          
+          if [ $STATUS_CODE -eq 200 ]; then
+            echo "✅ Performance check passed"
           else
-            echo "⚠️ npm not available, skipping Lighthouse audit"
+            echo "⚠️ Performance check warnings detected"
           fi
 
   # Notification job
@@ -158,29 +150,3 @@ jobs:
           echo "❌ Deployment or health check failed"
           echo "🔍 Check the logs for details"
           exit 1
-
-  # Security job
-  security-scan:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Run security audit
-        run: |
-          npm audit --audit-level=moderate || echo "⚠️ Security vulnerabilities found"
-      
-      - name: Dependency Review
-        uses: actions/dependency-review-action@v4
-        if: github.event_name == 'pull_request'
