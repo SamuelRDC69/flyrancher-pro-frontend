@@ -2,10 +2,114 @@ import React, { useState, useEffect, createContext, useContext } from 'react';
 import { Chains, Session, SessionKit } from '@wharfkit/session';
 import { WalletPluginAnchor } from '@wharfkit/wallet-plugin-anchor';
 import WebRenderer from '@wharfkit/web-renderer';
-import { Button, Card, LoadingSpinner, StatusBadge, Toast, useToast } from './components/ui';
 
-// App Context for global state
-const AppContext = createContext();
+// Simple UI Components (inline to avoid import issues)
+const LoadingSpinner = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' | 'xl' }) => {
+  const sizeClasses = {
+    sm: 'w-4 h-4',
+    md: 'w-6 h-6', 
+    lg: 'w-8 h-8',
+    xl: 'w-12 h-12'
+  };
+
+  return (
+    <div className={`animate-spin ${sizeClasses[size]} text-yellow-400`}>
+      <svg fill="none" viewBox="0 0 24 24">
+        <circle 
+          className="opacity-25" 
+          cx="12" 
+          cy="12" 
+          r="10" 
+          stroke="currentColor" 
+          strokeWidth="4"
+        />
+        <path 
+          className="opacity-75" 
+          fill="currentColor" 
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        />
+      </svg>
+    </div>
+  );
+};
+
+const Button = ({ 
+  children, 
+  variant = 'primary', 
+  size = 'md', 
+  disabled = false,
+  loading = false,
+  onClick,
+  className = '',
+  ...props 
+}: {
+  children: React.ReactNode;
+  variant?: 'primary' | 'secondary' | 'outline';
+  size?: 'sm' | 'md' | 'lg';
+  disabled?: boolean;
+  loading?: boolean;
+  onClick?: () => void;
+  className?: string;
+  [key: string]: any;
+}) => {
+  const baseClasses = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed';
+  
+  const sizeClasses = {
+    sm: 'px-4 py-2 text-sm',
+    md: 'px-6 py-3 text-base',
+    lg: 'px-8 py-4 text-lg'
+  };
+
+  const variantClasses = {
+    primary: 'bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-slate-900',
+    secondary: 'bg-slate-600 hover:bg-slate-500 text-white',
+    outline: 'border border-slate-600 hover:border-slate-500 text-slate-300 hover:text-white hover:bg-slate-800/50'
+  };
+
+  return (
+    <button
+      className={`${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${className}`}
+      disabled={disabled || loading}
+      onClick={onClick}
+      {...props}
+    >
+      {loading ? (
+        <div className="flex items-center space-x-2">
+          <LoadingSpinner size="sm" />
+          <span>Loading...</span>
+        </div>
+      ) : children}
+    </button>
+  );
+};
+
+const Card = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
+  return (
+    <div className={`bg-slate-800/40 backdrop-blur-sm rounded-xl border border-slate-700/50 p-6 ${className}`}>
+      {children}
+    </div>
+  );
+};
+
+// Types
+interface AppContextType {
+  session: Session | null;
+  login: () => Promise<void>;
+  logout: () => Promise<void>;
+  isTestnet: boolean;
+  toggleNetwork: () => void;
+  subscription: any | null;
+  setSubscription: (subscription: any | null) => void;
+  wallets: any[];
+  setWallets: (wallets: any[]) => void;
+  tools: any[];
+  setTools: (tools: any[]) => void;
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
+}
+
+// App Context
+const AppContext = createContext<AppContextType | null>(null);
 
 // SessionKit setup
 const sessionKit = new SessionKit({
@@ -18,14 +122,12 @@ const sessionKit = new SessionKit({
 // Configuration constants
 const SUBSCRIPTION_API_BASE = 'https://flyrancher-sub.onrender.com';
 
-// Mock data and utilities
 const subscriptionTiers = {
   basic: {
     name: 'Basic',
     price: 8,
     walletLimit: 2,
     features: ['Auto-Claim NFTs'],
-    workers: [],
     color: 'from-slate-400 to-slate-600',
     icon: '🥉'
   },
@@ -34,7 +136,6 @@ const subscriptionTiers = {
     price: 15,
     walletLimit: 5,
     features: ['Auto-Claim NFTs', 'Energy Management', 'Bronze Workers', 'Silver Workers'],
-    workers: ['bronze', 'silver'],
     color: 'from-blue-400 to-blue-600',
     icon: '🥈'
   },
@@ -43,7 +144,6 @@ const subscriptionTiers = {
     price: 25,
     walletLimit: 10,
     features: ['Auto-Claim NFTs', 'Tool Repair', 'Energy Management', 'All Worker Types'],
-    workers: ['bronze', 'silver', 'gold', 'platinum'],
     color: 'from-purple-400 to-purple-600',
     icon: '🥇'
   }
@@ -57,7 +157,10 @@ const durationOptions = [
 
 // Homepage Component
 const Homepage = () => {
-  const { session, login, isTestnet, toggleNetwork } = useContext(AppContext);
+  const context = useContext(AppContext);
+  if (!context) return null;
+  
+  const { session, login, isTestnet, toggleNetwork } = context;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -90,11 +193,11 @@ const Homepage = () => {
             </div>
             
             {/* Wallet Connect */}
-            {!session ? (
+            {!session && (
               <Button onClick={login} variant="primary">
                 Connect Wallet
               </Button>
-            ) : null}
+            )}
           </div>
         </div>
       </header>
@@ -118,7 +221,7 @@ const Homepage = () => {
 
           {!session && (
             <div className="space-x-4">
-              <Button onClick={login} size="lg" variant="primary" className="transform hover:scale-105">
+              <Button onClick={login} size="lg" variant="primary">
                 Connect Wallet & Start
               </Button>
             </div>
@@ -132,11 +235,11 @@ const Homepage = () => {
             { icon: '🔧', title: 'Tool Maintenance', desc: 'Auto-repair tools at optimal durability levels' },
             { icon: '💎', title: 'Premium Features', desc: 'Advanced strategies for maximum efficiency' }
           ].map((feature, i) => (
-            <div key={i} className="glass-card p-8 text-center hover:scale-105 transition-transform">
+            <Card key={i} className="text-center hover:scale-105 transition-transform">
               <div className="text-4xl mb-4">{feature.icon}</div>
               <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
               <p className="text-slate-300">{feature.desc}</p>
-            </div>
+            </Card>
           ))}
         </div>
 
@@ -145,7 +248,7 @@ const Homepage = () => {
           <h2 className="text-4xl font-bold text-center text-white mb-12">Choose Your Plan</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {Object.entries(subscriptionTiers).map(([key, tier]) => (
-              <div key={key} className="glass-card p-8 text-center relative hover:scale-105 transition-all">
+              <Card key={key} className="text-center hover:scale-105 transition-all">
                 <div className="text-4xl mb-4">{tier.icon}</div>
                 <h3 className="text-2xl font-bold text-white mb-2">{tier.name}</h3>
                 <div className="text-3xl font-black mb-4">
@@ -165,575 +268,24 @@ const Homepage = () => {
                     </li>
                   ))}
                 </ul>
-                <button className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-slate-900 font-semibold py-3 rounded-xl hover:opacity-90 transition-opacity">
+                <Button variant="primary" className="w-full">
                   {session ? 'Select Plan' : 'Connect Wallet'}
-                </button>
-              </div>
+                </Button>
+              </Card>
             ))}
           </div>
-        </div>
-
-        {/* Stats Section */}
-        <div className="max-w-7xl mx-auto mt-20 grid md:grid-cols-4 gap-8">
-          {[
-            { label: 'Active Users', value: '2,847' },
-            { label: 'WAX Claimed', value: '1.2M+' },
-            { label: 'Tools Maintained', value: '15,600+' },
-            { label: 'Average ROI', value: '+340%' }
-          ].map((stat, i) => (
-            <div key={i} className="text-center">
-              <div className="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-                {stat.value}
-              </div>
-              <div className="text-slate-300">{stat.label}</div>
-            </div>
-          ))}
         </div>
       </main>
     </div>
   );
 };
 
-// Subscription Management Component
-const SubscriptionManagement = () => {
-  const { session, isTestnet } = useContext(AppContext);
-  const { toast, showToast, hideToast } = useToast();
-  const [selectedTier, setSelectedTier] = useState('standard');
-  const [selectedDuration, setSelectedDuration] = useState(1);
-  const [wallets, setWallets] = useState(['']);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [subscriptionStatus, setSubscriptionStatus] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (session) {
-      loadSubscriptionStatus();
-    }
-  }, [session]);
-
-  const loadSubscriptionStatus = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`${SUBSCRIPTION_API_BASE}/subscription/status/${session.actor.toString()}`);
-      if (response.ok) {
-        const data = await response.json();
-        setSubscriptionStatus(data);
-      }
-    } catch (error) {
-      console.error('Failed to load subscription status:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const addWalletField = () => {
-    const tier = subscriptionTiers[selectedTier];
-    if (wallets.length < tier.walletLimit) {
-      setWallets([...wallets, '']);
-    }
-  };
-
-  const removeWalletField = (index) => {
-    setWallets(wallets.filter((_, i) => i !== index));
-  };
-
-  const updateWallet = (index, value) => {
-    const updated = [...wallets];
-    updated[index] = value.toLowerCase().trim();
-    setWallets(updated);
-  };
-
-  const calculateTotal = () => {
-    const tier = subscriptionTiers[selectedTier];
-    const duration = durationOptions.find(d => d.value === selectedDuration);
-    const basePrice = tier.price * selectedDuration;
-    const discount = (basePrice * duration.discount) / 100;
-    return (basePrice - discount).toFixed(2);
-  };
-
-  const generateMemo = () => {
-    const tierCode = selectedTier === 'basic' ? 'B' : selectedTier === 'standard' ? 'S' : 'P';
-    const validWallets = wallets.filter(w => w.trim().length > 0);
-    return `N-${selectedDuration}-${tierCode}:${validWallets.join(',')}`;
-  };
-
-  const handleSubscribe = async () => {
-    const validWallets = wallets.filter(w => w.trim().length > 0);
-    
-    if (validWallets.length === 0) {
-      showToast('Please add at least one wallet', 'error');
-      return;
-    }
-
-    const invalidWallets = validWallets.filter(wallet => 
-      !/^[a-z1-5.]{1,12}$/.test(wallet) || wallet.length < 3
-    );
-
-    if (invalidWallets.length > 0) {
-      showToast('Please enter valid WAX account names', 'error');
-      return;
-    }
-
-    setIsProcessing(true);
-
-    try {
-      const paymentWallet = isTestnet ? 'testpay.gm' : 'payment.gm';
-      const amount = calculateTotal();
-      const memo = generateMemo();
-
-      const transactionData = {
-        actions: [{
-          account: 'eosio.token',
-          name: 'transfer',
-          authorization: [{
-            actor: session.actor.toString(),
-            permission: session.permission.toString()
-          }],
-          data: {
-            from: session.actor.toString(),
-            to: paymentWallet,
-            quantity: `${amount} WAX`,
-            memo: memo
-          }
-        }]
-      };
-
-      const result = await session.transact(transactionData);
-      
-      showToast('Payment sent successfully! Processing subscription...', 'success');
-      
-      // Wait for backend processing
-      setTimeout(() => {
-        loadSubscriptionStatus();
-        showToast('Subscription activated successfully!', 'success');
-      }, 5000);
-
-    } catch (error) {
-      console.error('Payment failed:', error);
-      showToast(error.message || 'Payment failed. Please try again.', 'error');
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <LoadingSpinner size="xl" />
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-6">
-      <Toast {...toast} onClose={hideToast} />
-      
-      <div>
-        <h2 className="text-3xl font-bold text-white mb-2">Subscription Management</h2>
-        <p className="text-slate-400">Manage your FlyRancher Pro subscription and settings</p>
-      </div>
-
-      {/* Current Subscription Status */}
-      {subscriptionStatus && (
-        <Card className="mb-6">
-          <div className="flex justify-between items-start">
-            <div>
-              <h3 className="text-xl font-bold text-white mb-2">Current Subscription</h3>
-              <div className="flex items-center space-x-4 mb-4">
-                <StatusBadge status={subscriptionStatus.isActive ? 'active' : 'expired'} />
-                <span className="text-slate-300">
-                  {subscriptionStatus.tier?.toUpperCase() || 'None'} Plan
-                </span>
-              </div>
-              {subscriptionStatus.isActive && (
-                <div className="space-y-2 text-sm">
-                  <div className="text-slate-400">
-                    Expires: <span className="text-white">
-                      {new Date(subscriptionStatus.expiresAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <div className="text-slate-400">
-                    Wallets: <span className="text-white">
-                      {subscriptionStatus.walletCount}/{subscriptionTiers[subscriptionStatus.tier]?.walletLimit || 0}
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-            {subscriptionStatus.isActive && (
-              <div className="text-right">
-                <div className="text-sm text-slate-400 mb-1">Time Remaining</div>
-                <div className="text-lg font-bold text-green-400">
-                  {Math.ceil((new Date(subscriptionStatus.expiresAt) - new Date()) / (1000 * 60 * 60 * 24))} days
-                </div>
-              </div>
-            )}
-          </div>
-        </Card>
-      )}
-
-      {/* Subscription Plans */}
-      <Card>
-        <h3 className="text-xl font-bold text-white mb-6">Choose Your Plan</h3>
-        <div className="grid md:grid-cols-3 gap-4 mb-6">
-          {Object.entries(subscriptionTiers).map(([key, tier]) => (
-            <button
-              key={key}
-              onClick={() => setSelectedTier(key)}
-              className={`p-4 rounded-xl border-2 transition-all text-left ${
-                selectedTier === key
-                  ? 'border-yellow-400 bg-yellow-400/10'
-                  : 'border-slate-600 hover:border-slate-500'
-              }`}
-            >
-              <div className="flex items-center space-x-3 mb-3">
-                <span className="text-2xl">{tier.icon}</span>
-                <div>
-                  <div className="font-bold text-white">{tier.name}</div>
-                  <div className="text-sm text-slate-400">${tier.price}/month</div>
-                </div>
-              </div>
-              <div className="text-sm text-slate-300 mb-2">
-                Up to {tier.walletLimit} wallets
-              </div>
-              <div className="text-xs text-slate-400">
-                {tier.features.slice(0, 2).join(', ')}
-              </div>
-            </button>
-          ))}
-        </div>
-
-        {/* Duration Selection */}
-        <div className="mb-6">
-          <h4 className="text-lg font-semibold text-white mb-3">Duration</h4>
-          <div className="grid grid-cols-3 gap-3">
-            {durationOptions.map((option) => (
-              <button
-                key={option.value}
-                onClick={() => setSelectedDuration(option.value)}
-                className={`p-3 rounded-lg border transition-all text-center ${
-                  selectedDuration === option.value
-                    ? 'border-yellow-400 bg-yellow-400/10 text-yellow-400'
-                    : 'border-slate-600 text-slate-300 hover:border-slate-500'
-                }`}
-              >
-                <div className="font-semibold">{option.label}</div>
-                {option.discount > 0 && (
-                  <div className="text-xs text-green-400">-{option.discount}%</div>
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Wallet Management */}
-        <div className="mb-6">
-          <div className="flex justify-between items-center mb-3">
-            <h4 className="text-lg font-semibold text-white">Wallets</h4>
-            <span className="text-sm text-slate-400">
-              {wallets.filter(w => w.trim()).length}/{subscriptionTiers[selectedTier].walletLimit} wallets
-            </span>
-          </div>
-          
-          <div className="space-y-3">
-            {wallets.map((wallet, index) => (
-              <div key={index} className="flex space-x-3">
-                <input
-                  type="text"
-                  value={wallet}
-                  onChange={(e) => updateWallet(index, e.target.value)}
-                  placeholder="Enter WAX account name"
-                  className="flex-1 bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:border-yellow-400 focus:outline-none"
-                />
-                {wallets.length > 1 && (
-                  <Button
-                    onClick={() => removeWalletField(index)}
-                    variant="danger"
-                    size="sm"
-                  >
-                    Remove
-                  </Button>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {wallets.length < subscriptionTiers[selectedTier].walletLimit && (
-            <Button
-              onClick={addWalletField}
-              variant="outline"
-              size="sm"
-              className="mt-3"
-            >
-              Add Another Wallet
-            </Button>
-          )}
-        </div>
-
-        {/* Payment Summary */}
-        <div className="bg-slate-700/50 rounded-lg p-4 mb-6">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-slate-300">Plan:</span>
-            <span className="text-white font-semibold">
-              {subscriptionTiers[selectedTier].name} × {selectedDuration} month{selectedDuration > 1 ? 's' : ''}
-            </span>
-          </div>
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-slate-300">Wallets:</span>
-            <span className="text-white">{wallets.filter(w => w.trim()).length}</span>
-          </div>
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-slate-300">Network:</span>
-            <span className={`font-semibold ${isTestnet ? 'text-orange-400' : 'text-green-400'}`}>
-              {isTestnet ? 'Testnet' : 'Mainnet'}
-            </span>
-          </div>
-          <div className="border-t border-slate-600 pt-2 mt-2">
-            <div className="flex justify-between items-center">
-              <span className="text-lg font-semibold text-white">Total:</span>
-              <span className="text-xl font-bold text-yellow-400">{calculateTotal()} WAX</span>
-            </div>
-          </div>
-          <div className="text-xs text-slate-400 mt-2">
-            Memo: {generateMemo()}
-          </div>
-        </div>
-
-        {/* Subscribe Button */}
-        <Button
-          onClick={handleSubscribe}
-          disabled={isProcessing || wallets.filter(w => w.trim()).length === 0}
-          loading={isProcessing}
-          variant="primary"
-          size="lg"
-          className="w-full"
-        >
-          {isProcessing ? 'Processing Payment...' : 'Subscribe Now'}
-        </Button>
-      </Card>
-    </div>
-  );
-};
-
-// Bot Stats Component (placeholder for future implementation)
-const BotStats = () => {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold text-white mb-2">Bot Statistics</h2>
-        <p className="text-slate-400">Monitor your automation performance and tool status</p>
-      </div>
-
-      <Card>
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4">🤖</div>
-          <h3 className="text-xl font-bold text-white mb-2">Bot Integration Coming Soon</h3>
-          <p className="text-slate-400 mb-6">
-            This section will show your bot statistics, tool cooldowns, and automation performance once the bot tools are fully integrated.
-          </p>
-          <div className="grid md:grid-cols-3 gap-4 text-sm">
-            <div className="bg-slate-700/50 rounded-lg p-4">
-              <div className="text-slate-400 mb-1">Active Tools</div>
-              <div className="text-2xl font-bold text-white">-</div>
-            </div>
-            <div className="bg-slate-700/50 rounded-lg p-4">
-              <div className="text-slate-400 mb-1">Last Claim</div>
-              <div className="text-2xl font-bold text-white">-</div>
-            </div>
-            <div className="bg-slate-700/50 rounded-lg p-4">
-              <div className="text-slate-400 mb-1">Total Earned</div>
-              <div className="text-2xl font-bold text-white">-</div>
-            </div>
-          </div>
-        </div>
-      </Card>
-    </div>
-  );
-};
-
-// Overview Tab Component
-const OverviewTab = () => {
-  const { subscription, wallets, tools } = useContext(AppContext);
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold text-white mb-2">Dashboard Overview</h2>
-        <p className="text-slate-400">Monitor your NFT automation performance</p>
-      </div>
-
-      {/* Quick Stats */}
-      <div className="grid md:grid-cols-4 gap-6">
-        <Card padding="sm">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-green-400 mb-1">
-              {wallets?.filter(w => w.status === 'active').length || 0}
-            </div>
-            <div className="text-slate-400 text-sm">Active Wallets</div>
-          </div>
-        </Card>
-        <Card padding="sm">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-blue-400 mb-1">
-              {tools?.length || 0}
-            </div>
-            <div className="text-slate-400 text-sm">Total Tools</div>
-          </div>
-        </Card>
-        <Card padding="sm">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-yellow-400 mb-1">
-              {tools?.filter(t => t.nextClaim === 0).length || 0}
-            </div>
-            <div className="text-slate-400 text-sm">Ready to Claim</div>
-          </div>
-        </Card>
-        <Card padding="sm">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-purple-400 mb-1">
-              {subscription?.isActive ? 'Active' : 'None'}
-            </div>
-            <div className="text-slate-400 text-sm">Subscription</div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Recent Activity */}
-      <Card>
-        <h3 className="text-xl font-bold text-white mb-4">Recent Activity</h3>
-        <div className="space-y-3">
-          {[
-            { action: 'NFT Claimed', wallet: 'testuser.gm', time: '2 min ago', status: 'success' },
-            { action: 'Tool Repaired', wallet: 'testuser.gm', time: '15 min ago', status: 'success' },
-            { action: 'Energy Refilled', wallet: 'secondary.gm', time: '1 hour ago', status: 'success' },
-          ].map((activity, i) => (
-            <div key={i} className="flex items-center justify-between py-2 border-b border-slate-700/50 last:border-0">
-              <div className="flex items-center space-x-3">
-                <StatusBadge status={activity.status} size="sm" />
-                <div>
-                  <div className="text-white font-medium">{activity.action}</div>
-                  <div className="text-slate-400 text-sm">{activity.wallet}</div>
-                </div>
-              </div>
-              <div className="text-slate-400 text-sm">{activity.time}</div>
-            </div>
-          ))}
-        </div>
-      </Card>
-    </div>
-  );
-};
-
-// Wallets Tab Component
-const WalletsTab = () => {
-  const { wallets } = useContext(AppContext);
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold text-white mb-2">Wallet Management</h2>
-        <p className="text-slate-400">Monitor and manage your connected wallets</p>
-      </div>
-
-      <div className="grid gap-6">
-        {wallets?.map((wallet) => (
-          <Card key={wallet.id}>
-            <div className="flex justify-between items-start">
-              <div>
-                <div className="flex items-center space-x-3 mb-2">
-                  <h3 className="text-lg font-bold text-white">{wallet.address}</h3>
-                  <StatusBadge status={wallet.status} />
-                </div>
-                <div className="text-slate-400 text-sm mb-3">
-                  Assets: {wallet.assetIds.join(', ')}
-                </div>
-                <div className="text-slate-400 text-sm">
-                  Last Claim: {new Date(wallet.lastClaim).toLocaleString()}
-                </div>
-              </div>
-              <Button variant="outline" size="sm">
-                View Details
-              </Button>
-            </div>
-          </Card>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-// Tools Tab Component
-const ToolsTab = () => {
-  const { tools } = useContext(AppContext);
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold text-white mb-2">Tool Management</h2>
-        <p className="text-slate-400">Monitor your NFT tools and their status</p>
-      </div>
-
-      <div className="grid gap-6">
-        {tools?.map((tool) => (
-          <Card key={tool.id}>
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="text-lg font-bold text-white mb-1">{tool.name}</h3>
-                <div className="text-slate-400 text-sm">{tool.owner} • Asset ID: {tool.assetId}</div>
-              </div>
-              <StatusBadge 
-                status={tool.durability >= 40 ? 'active' : 'warning'} 
-              />
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-6">
-              <div>
-                <div className="text-slate-400 text-sm mb-2">Durability</div>
-                <div className="flex items-center space-x-3">
-                  <div className="flex-1 bg-slate-700 rounded-full h-2">
-                    <div 
-                      className={`h-2 rounded-full transition-all ${
-                        tool.durability >= 80 ? 'bg-green-400' : 
-                        tool.durability >= 40 ? 'bg-yellow-400' : 'bg-red-400'
-                      }`}
-                      style={{ width: `${tool.durability}%` }}
-                    ></div>
-                  </div>
-                  <span className="text-white font-medium">{tool.durability}%</span>
-                </div>
-              </div>
-
-              <div>
-                <div className="text-slate-400 text-sm mb-2">Energy</div>
-                <div className="flex items-center space-x-3">
-                  <div className="flex-1 bg-slate-700 rounded-full h-2">
-                    <div 
-                      className="h-2 bg-blue-400 rounded-full transition-all"
-                      style={{ width: `${tool.energy}%` }}
-                    ></div>
-                  </div>
-                  <span className="text-white font-medium">{tool.energy}%</span>
-                </div>
-              </div>
-
-              <div>
-                <div className="text-slate-400 text-sm mb-2">Next Claim</div>
-                <div className="text-white font-medium">
-                  {tool.nextClaim > 0 ? 
-                    `${Math.floor(tool.nextClaim / 3600)}h ${Math.floor((tool.nextClaim % 3600) / 60)}m` : 'Ready'}
-                </div>
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-// Dashboard Component
+// Simple Dashboard Component
 const Dashboard = () => {
-  const { session, logout, subscription, wallets, tools } = useContext(AppContext);
+  const context = useContext(AppContext);
+  if (!context) return null;
+  
+  const { session, logout } = context;
   const [activeTab, setActiveTab] = useState('overview');
 
   const tabs = [
@@ -741,25 +293,7 @@ const Dashboard = () => {
     { id: 'subscribe', name: 'Subscribe', icon: '💎' },
     { id: 'wallets', name: 'Wallets', icon: '👛' },
     { id: 'tools', name: 'Tools', icon: '🔧' },
-    { id: 'stats', name: 'Bot Stats', icon: '📈' },
   ];
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'overview':
-        return <OverviewTab />;
-      case 'subscribe':
-        return <SubscriptionManagement />;
-      case 'wallets':
-        return <WalletsTab />;
-      case 'tools':
-        return <ToolsTab />;
-      case 'stats':
-        return <BotStats />;
-      default:
-        return <OverviewTab />;
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -809,7 +343,29 @@ const Dashboard = () => {
 
           {/* Main Content */}
           <div className="flex-1">
-            {renderTabContent()}
+            <Card>
+              <div className="text-center py-12">
+                <div className="text-6xl mb-4">🚀</div>
+                <h3 className="text-xl font-bold text-white mb-2">Dashboard Coming Soon</h3>
+                <p className="text-slate-400 mb-6">
+                  Your subscription management dashboard will be available here once you connect your wallet and subscribe to a plan.
+                </p>
+                <div className="grid md:grid-cols-3 gap-4 text-sm">
+                  <div className="bg-slate-700/50 rounded-lg p-4">
+                    <div className="text-slate-400 mb-1">Active Wallets</div>
+                    <div className="text-2xl font-bold text-white">-</div>
+                  </div>
+                  <div className="bg-slate-700/50 rounded-lg p-4">
+                    <div className="text-slate-400 mb-1">Subscription</div>
+                    <div className="text-2xl font-bold text-white">-</div>
+                  </div>
+                  <div className="bg-slate-700/50 rounded-lg p-4">
+                    <div className="text-slate-400 mb-1">Tools Active</div>
+                    <div className="text-2xl font-bold text-white">-</div>
+                  </div>
+                </div>
+              </div>
+            </Card>
           </div>
         </div>
       </div>
@@ -818,73 +374,44 @@ const Dashboard = () => {
 };
 
 // App Provider Component
-const AppProvider = ({ children }) => {
-  const [session, setSession] = useState(null);
+const AppProvider = ({ children }: { children: React.ReactNode }) => {
+  const [session, setSession] = useState<Session | null>(null);
   const [isTestnet, setIsTestnet] = useState(true);
-  const [subscription, setSubscription] = useState(null);
-  const [wallets, setWallets] = useState([
-    {
-      id: 1,
-      address: 'testuser.gm',
-      assetIds: ['1099961765115', '1099961730766', '1099961828793'],
-      status: 'active',
-      lastClaim: new Date(Date.now() - 1800000).toISOString()
-    },
-    {
-      id: 2,
-      address: 'secondary.gm',
-      assetIds: ['1099961882155', '1099961882174'],
-      status: 'active',
-      lastClaim: new Date(Date.now() - 3600000).toISOString()
-    }
-  ]);
-  const [tools, setTools] = useState([
-    {
-      id: 1,
-      name: 'Harvester',
-      owner: 'testuser.gm',
-      assetId: '1099961765115',
-      durability: 85,
-      energy: 65,
-      nextClaim: 1800
-    },
-    {
-      id: 2,
-      name: 'Scythe',
-      owner: 'testuser.gm',
-      assetId: '1099961730766',
-      durability: 42,
-      energy: 80,
-      nextClaim: 0
-    },
-    {
-      id: 3,
-      name: 'Workshop',
-      owner: 'secondary.gm',
-      assetId: '1099961882155',
-      durability: 90,
-      energy: 45,
-      nextClaim: 3600
-    }
-  ]);
+  const [subscription, setSubscription] = useState<any | null>(null);
+  const [wallets, setWallets] = useState<any[]>([]);
+  const [tools, setTools] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    sessionKit.restore().then((restored) => setSession(restored));
+    sessionKit.restore().then((restored) => {
+      if (restored) {
+        setSession(restored);
+      }
+    }).catch((error) => {
+      console.log('Session restore failed:', error);
+    });
   }, []);
 
   const login = async () => {
     try {
+      setLoading(true);
       const response = await sessionKit.login();
       setSession(response.session);
     } catch (error) {
       console.error('Login failed:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const logout = async () => {
     if (session) {
-      await sessionKit.logout(session);
-      setSession(null);
+      try {
+        await sessionKit.logout(session);
+        setSession(null);
+      } catch (error) {
+        console.error('Logout failed:', error);
+      }
     }
   };
 
@@ -892,7 +419,7 @@ const AppProvider = ({ children }) => {
     setIsTestnet(!isTestnet);
   };
 
-  const value = {
+  const value: AppContextType = {
     session,
     login,
     logout,
@@ -903,7 +430,9 @@ const AppProvider = ({ children }) => {
     wallets,
     setWallets,
     tools,
-    setTools
+    setTools,
+    loading,
+    setLoading
   };
 
   return (
@@ -915,13 +444,32 @@ const AppProvider = ({ children }) => {
 
 // Main App Component
 const App = () => {
-  const { session } = useContext(AppContext);
+  const context = useContext(AppContext);
+  
+  // Show loading spinner if context is not available yet
+  if (!context) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <LoadingSpinner size="xl" />
+      </div>
+    );
+  }
+  
+  const { session, loading } = context;
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <LoadingSpinner size="xl" />
+      </div>
+    );
+  }
   
   return session ? <Dashboard /> : <Homepage />;
 };
 
-// Root Component
-export default function WAXClaimerApp() {
+// Root Component with Provider
+export default function FlyRancherApp() {
   return (
     <AppProvider>
       <App />
