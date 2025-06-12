@@ -26,9 +26,9 @@
     <meta property="twitter:description" content="Professional-grade automation for Ranchers Land NFTs. Maximize your rewards with intelligent claiming, tool maintenance, and energy management." />
     <meta property="twitter:image" content="https://samuelrdc69.github.io/flyrancher-pro-frontend/og-image.png" />
     
-    <!-- Favicon - Only favicon.svg to avoid 404s -->
-    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="manifest" href="./manifest.json" />
+    <!-- Favicon - NO leading slash for public assets -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="manifest" href="manifest.json" />
     
     <!-- Theme Color -->
     <meta name="theme-color" content="#facc15" />
@@ -85,7 +85,7 @@
     <!-- Service Worker Registration -->
     <script>
       // Register Service Worker for caching and offline support
-      if ('serviceWorker' in navigator && 'production' === 'production') {
+      if ('serviceWorker' in navigator && window.location.hostname !== 'localhost') {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('./sw.js')
             .then((registration) => {
@@ -169,17 +169,6 @@
         });
       }
       
-      // Analytics placeholder (replace with your tracking code)
-      /*
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'GA_MEASUREMENT_ID', {
-        page_title: 'FlyRancher Pro',
-        page_location: window.location.href
-      });
-      */
-      
       // App version info
       console.log('🤖 FlyRancher Pro v1.0.0 - Professional NFT Automation');
       console.log('🔗 GitHub: https://github.com/SamuelRDC69/flyrancher-pro-frontend');
@@ -188,7 +177,7 @@
   <body>
     <div id="root"></div>
     
-    <!-- App Script - FIXED: Using relative path -->
-    <script type="module" src="./src/main.tsx"></script>
+    <!-- App Script - RELATIVE PATH for Vite to process correctly -->
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
