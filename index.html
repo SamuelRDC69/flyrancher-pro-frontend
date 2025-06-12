@@ -26,7 +26,7 @@
     <meta property="twitter:description" content="Professional-grade automation for Ranchers Land NFTs. Maximize your rewards with intelligent claiming, tool maintenance, and energy management." />
     <meta property="twitter:image" content="https://samuelrdc69.github.io/flyrancher-pro-frontend/og-image.png" />
     
-    <!-- Favicon - NO leading slash for public assets -->
+    <!-- Favicon - NO leading slash -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="manifest" href="manifest.json" />
     
@@ -87,7 +87,7 @@
       // Register Service Worker for caching and offline support
       if ('serviceWorker' in navigator && window.location.hostname !== 'localhost') {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js')
+          navigator.serviceWorker.register('sw.js')
             .then((registration) => {
               console.log('✅ SW registration successful:', registration.scope);
             })
@@ -177,7 +177,7 @@
   <body>
     <div id="root"></div>
     
-    <!-- App Script - RELATIVE PATH for Vite to process correctly -->
+    <!-- App Script - Vite will transform this during build -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
