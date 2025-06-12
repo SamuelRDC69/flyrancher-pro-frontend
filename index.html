@@ -5,34 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Primary Meta Tags -->
-    <title>FlyRancher Pro - WAX NFT Automation with Subscription Management</title>
-    <meta name="title" content="FlyRancher Pro - WAX NFT Automation" />
-    <meta name="description" content="Professional-grade automation for Ranchers Land NFTs. Maximize your rewards with intelligent claiming, tool maintenance, energy management, and flexible subscription plans." />
-    <meta name="keywords" content="WAX, NFT, automation, Ranchers Land, subscription, blockchain, DeFi, gaming, tools, energy management" />
+    <title>FlyRancher Pro - Professional WAX NFT Automation</title>
+    <meta name="title" content="FlyRancher Pro - Professional WAX NFT Automation" />
+    <meta name="description" content="Professional-grade automation for Ranchers Land NFTs. Maximize your rewards with intelligent claiming, tool maintenance, and energy management. Subscribe now!" />
+    <meta name="keywords" content="wax, blockchain, nft, automation, ranchers land, flyrancher, subscription, defi, gaming, crypto" />
     <meta name="author" content="FlyRancher Team" />
     <meta name="robots" content="index, follow" />
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://samuelrdc69.github.io/flyrancher-pro-frontend/" />
-    <meta property="og:title" content="FlyRancher Pro - WAX NFT Automation" />
-    <meta property="og:description" content="Professional-grade automation for Ranchers Land NFTs with subscription management." />
+    <meta property="og:title" content="FlyRancher Pro - Professional WAX NFT Automation" />
+    <meta property="og:description" content="Professional-grade automation for Ranchers Land NFTs. Maximize your rewards with intelligent claiming, tool maintenance, and energy management." />
     <meta property="og:image" content="https://samuelrdc69.github.io/flyrancher-pro-frontend/og-image.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:site_name" content="FlyRancher Pro" />
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://samuelrdc69.github.io/flyrancher-pro-frontend/" />
-    <meta property="twitter:title" content="FlyRancher Pro - WAX NFT Automation" />
-    <meta property="twitter:description" content="Professional-grade automation for Ranchers Land NFTs with subscription management." />
+    <meta property="twitter:title" content="FlyRancher Pro - Professional WAX NFT Automation" />
+    <meta property="twitter:description" content="Professional-grade automation for Ranchers Land NFTs. Maximize your rewards with intelligent claiming, tool maintenance, and energy management." />
     <meta property="twitter:image" content="https://samuelrdc69.github.io/flyrancher-pro-frontend/og-image.png" />
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/manifest.json" />
+    <!-- Favicon - FIXED: Using relative paths -->
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.json" />
     
     <!-- Theme Color -->
     <meta name="theme-color" content="#facc15" />
@@ -78,191 +75,65 @@
         "@type": "Offer",
         "price": "8",
         "priceCurrency": "WAX",
-        "description": "Basic subscription plan starting at 8 WAX per month"
-      },
-      "creator": {
-        "@type": "Organization",
-        "name": "FlyRancher Team"
-      },
-      "screenshot": "https://samuelrdc69.github.io/flyrancher-pro-frontend/screenshot.png",
-      "featureList": [
-        "Auto-Claim NFTs",
-        "Tool Repair Automation", 
-        "Energy Management",
-        "Multiple Wallet Support",
-        "Subscription Management",
-        "Real-time Statistics"
-      ]
+        "description": "Basic subscription plan starting at 8 WAX"
+      }
     }
     </script>
     
-    <!-- Analytics placeholder - replace with your tracking code -->
-    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script> -->
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     
-    <!-- Progressive Web App -->
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="FlyRancher Pro" />
-    
-    <!-- Disable zoom on mobile -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    
-    <!-- Loading styles -->
-    <style>
-      /* Critical CSS for loading screen */
-      #loading-screen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #0f172a, #1e293b, #0f172a);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-        color: white;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      }
-      
-      .loading-logo {
-        width: 80px;
-        height: 80px;
-        background: linear-gradient(135deg, #facc15, #f97316);
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 40px;
-        margin-bottom: 20px;
-        animation: pulse 2s ease-in-out infinite;
-      }
-      
-      .loading-text {
-        font-size: 24px;
-        font-weight: bold;
-        background: linear-gradient(135deg, #facc15, #f97316);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 10px;
-      }
-      
-      .loading-subtitle {
-        color: #94a3b8;
-        font-size: 14px;
-        margin-bottom: 30px;
-      }
-      
-      .loading-spinner {
-        width: 40px;
-        height: 40px;
-        border: 3px solid #334155;
-        border-top: 3px solid #facc15;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-      
-      @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-      }
-      
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-      
-      /* Hide loading screen when app loads */
-      .app-loaded #loading-screen {
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.5s ease-out;
-      }
-    </style>
-  </head>
-  
-  <body>
-    <!-- Loading Screen -->
-    <div id="loading-screen">
-      <div class="loading-logo">🤖</div>
-      <div class="loading-text">FlyRancher Pro</div>
-      <div class="loading-subtitle">Professional NFT Automation</div>
-      <div class="loading-spinner"></div>
-    </div>
-    
-    <!-- App Root -->
-    <div id="root"></div>
-    
-    <!-- App Initialization Script -->
+    <!-- Service Worker Registration -->
     <script>
-      // Remove loading screen when app loads
-      window.addEventListener('load', () => {
-        setTimeout(() => {
-          document.body.classList.add('app-loaded');
-          setTimeout(() => {
-            const loadingScreen = document.getElementById('loading-screen');
-            if (loadingScreen) {
-              loadingScreen.remove();
-            }
-          }, 500);
-        }, 1000);
-      });
-      
-      // Service Worker Registration with better error handling
-      if ('serviceWorker' in navigator) {
+      // Register Service Worker for caching and offline support
+      if ('serviceWorker' in navigator && 'production' === 'production') {
         window.addEventListener('load', () => {
-          // Only register on HTTPS or localhost
-          const isSecure = location.protocol === 'https:' || location.hostname === 'localhost';
-          
-          if (isSecure) {
-            navigator.serviceWorker.register('/sw.js')
-              .then((registration) => {
-                console.log('✅ SW registered successfully:', registration.scope);
-                
-                // Listen for updates
-                registration.addEventListener('updatefound', () => {
-                  console.log('🔄 SW update found');
-                  const newWorker = registration.installing;
-                  
-                  if (newWorker) {
-                    newWorker.addEventListener('statechange', () => {
-                      if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                        console.log('🆕 SW update available');
-                        // You could show a notification to the user here
-                      }
-                    });
-                  }
-                });
-              })
-              .catch((error) => {
-                // Only log as warning, not error, since SW is optional
-                console.warn('⚠️ SW registration failed (optional feature):', error.message);
-              });
-          } else {
-            console.log('ℹ️ SW not registered - HTTPS required');
-          }
+          navigator.serviceWorker.register('./sw.js')
+            .then((registration) => {
+              console.log('✅ SW registration successful:', registration.scope);
+            })
+            .catch((error) => {
+              console.log(' ⚠️ SW registration failed (optional feature):', error);
+            });
         });
-      } else {
-        console.log('ℹ️ SW not supported in this browser');
       }
-      
+    </script>
+    
+    <!-- Global Error Handlers -->
+    <script>
       // Global error handling
       window.addEventListener('error', (event) => {
-        console.error('💥 Global error:', event.error);
+        console.error('🚫 Global error caught:', {
+          message: event.message,
+          filename: event.filename,
+          line: event.lineno,
+          column: event.colno,
+          stack: event.error?.stack
+        });
         
-        // Filter out common non-critical errors
-        const ignoredErrors = [
-          'Script error',
-          'Non-Error promise rejection captured',
-          'ResizeObserver loop limit exceeded'
-        ];
+        // Don't show error dialogs to users in production
+        if (event.filename && event.filename.includes('chrome-extension')) {
+          event.preventDefault();
+          return false;
+        }
         
-        if (!ignoredErrors.some(ignored => event.message?.includes(ignored))) {
-          // Only log significant errors
-          console.error('Error details:', {
+        // Handle specific errors gracefully
+        if (event.message.includes('Script error') || 
+            event.message.includes('Load failed')) {
+          console.warn('🔄 Non-critical error suppressed:', event.message);
+          event.preventDefault();
+          return false;
+        }
+        
+        // Log the error for debugging
+        if (typeof gtag !== 'undefined') {
+          gtag('event', 'exception', {
+            description: event.message,
+            fatal: false
+          });
+        } else {
+          // Fallback error reporting
+          console.error('📊 Error logged:', {
             message: event.message,
             filename: event.filename,
             line: event.lineno,
@@ -314,8 +185,11 @@
       console.log('🤖 FlyRancher Pro v1.0.0 - Professional NFT Automation');
       console.log('🔗 GitHub: https://github.com/SamuelRDC69/flyrancher-pro-frontend');
     </script>
+  </head>
+  <body>
+    <div id="root"></div>
     
-    <!-- App Script -->
-    <script type="module" src="/src/main.tsx"></script>
+    <!-- App Script - FIXED: Using relative path -->
+    <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>
